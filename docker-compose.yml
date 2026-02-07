@@ -1,0 +1,9 @@
+services:
+  web:
+    build: .
+    container_name: beri_prosto_service
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3001:3000"
+    env_file:
+      - .env.production

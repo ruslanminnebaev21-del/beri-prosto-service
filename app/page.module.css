@@ -8,6 +8,8 @@
   --button-primary-hover: #383838;
   --button-secondary-hover: #f2f2f2;
   --button-secondary-border: #ebebeb;
+  --calendar-cell: #fff;
+  --calendar-empty: #f8f8f8;
 
   display: flex;
   min-height: 100vh;
@@ -58,6 +60,66 @@
 .intro a {
   font-weight: 500;
   color: var(--text-primary);
+}
+
+.calendar {
+  width: 100%;
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.calendarHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid var(--button-secondary-border);
+  padding-bottom: 12px;
+}
+
+.calendarHeader h2 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+}
+
+.calendarHeader span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.calendarTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.calendarTable th {
+  text-align: left;
+  font-weight: 600;
+  padding: 8px 0;
+  color: var(--text-secondary);
+}
+
+.calendarTable td {
+  border: 1px solid var(--button-secondary-border);
+  height: 56px;
+  vertical-align: top;
+  padding: 8px;
+  background: var(--calendar-cell);
+}
+
+.calendarDay {
+  font-weight: 500;
+}
+
+.calendarEmpty {
+  background: var(--calendar-empty);
 }
 
 .ctas {
@@ -120,6 +182,11 @@ a.secondary {
     line-height: 40px;
     letter-spacing: -1.92px;
   }
+
+  .calendarTable td {
+    height: 48px;
+    padding: 6px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -137,5 +204,7 @@ a.secondary {
     --button-primary-hover: #ccc;
     --button-secondary-hover: #1a1a1a;
     --button-secondary-border: #1a1a1a;
+    --calendar-cell: #0f0f0f;
+    --calendar-empty: #070707;
   }
 }

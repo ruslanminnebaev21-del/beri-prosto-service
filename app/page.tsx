@@ -1,65 +1,80 @@
-import Image from "next/image";
 import styles from "./page.module.css";
 
-export default function Home() {
+export default function Page() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <section className={styles.intro}>
+          <h1>Сервисная страница Бери Просто</h1>
+          <p>Проект развернут. Дальше — логика и дизайн.</p>
+        </section>
+
+        <section className={styles.calendar}>
+          <div className={styles.calendarHeader}>
+            <h2>Февраль 2026</h2>
+            <span>28 дней</span>
+          </div>
+          <table className={styles.calendarTable}>
+            <thead>
+              <tr>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarEmpty} />
+                <td className={styles.calendarDay}>1</td>
+              </tr>
+              <tr>
+                <td className={styles.calendarDay}>2</td>
+                <td className={styles.calendarDay}>3</td>
+                <td className={styles.calendarDay}>4</td>
+                <td className={styles.calendarDay}>5</td>
+                <td className={styles.calendarDay}>6</td>
+                <td className={styles.calendarDay}>7</td>
+                <td className={styles.calendarDay}>8</td>
+              </tr>
+              <tr>
+                <td className={styles.calendarDay}>9</td>
+                <td className={styles.calendarDay}>10</td>
+                <td className={styles.calendarDay}>11</td>
+                <td className={styles.calendarDay}>12</td>
+                <td className={styles.calendarDay}>13</td>
+                <td className={styles.calendarDay}>14</td>
+                <td className={styles.calendarDay}>15</td>
+              </tr>
+              <tr>
+                <td className={styles.calendarDay}>16</td>
+                <td className={styles.calendarDay}>17</td>
+                <td className={styles.calendarDay}>18</td>
+                <td className={styles.calendarDay}>19</td>
+                <td className={styles.calendarDay}>20</td>
+                <td className={styles.calendarDay}>21</td>
+                <td className={styles.calendarDay}>22</td>
+              </tr>
+              <tr>
+                <td className={styles.calendarDay}>23</td>
+                <td className={styles.calendarDay}>24</td>
+                <td className={styles.calendarDay}>25</td>
+                <td className={styles.calendarDay}>26</td>
+                <td className={styles.calendarDay}>27</td>
+                <td className={styles.calendarDay}>28</td>
+                <td className={styles.calendarEmpty} />
+              </tr>
+            </tbody>
+          </table>
+        </section>
       </main>
     </div>
   );
