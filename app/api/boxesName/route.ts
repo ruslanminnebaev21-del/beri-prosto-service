@@ -1,6 +1,7 @@
-// app/api/esi/allBoxes/route.ts
+// app/api/db/boxesName/route.ts
 import { NextResponse } from "next/server";
 import { esi } from "@/lib/esiClient";
+import { getBoxesMetaMap } from "@/lib/repos/boxes";
 
 export const dynamic = "force-dynamic";
 
@@ -8,8 +9,6 @@ type Cell = {
   state?: string;
   open?: boolean;
   backlight_enabled?: boolean;
-  height?: number;
-  // pin намеренно игнорируем
 };
 
 type MachineRaw = {
@@ -17,8 +16,10 @@ type MachineRaw = {
   cells?: Record<string, Cell>;
 };
 
-type MachineUi = {
-  id: string;
+type BoxUi = {
+  id: string; // PST_0702
+  title: string; // name из БД (или id)
+  address: string | null;
   online: boolean;
   totalCells: number;
   vacant: number;
@@ -28,7 +29,7 @@ type MachineUi = {
   backlightOn: number;
 };
 
-function toUi(id: string, m: MachineRaw): MachineUi {
+function toStats(id: string, m: MachineRaw) {
   const cells = m?.cells || {};
   const list = Object.values(cells);
 
@@ -69,25 +70,40 @@ export async function GET() {
       );
     }
 
+    // 1) забираем мапу из БД: PST_xxxx -> { name, full_address }
+    const metaMap = await getBoxesMetaMap();
+
+    // 2) забираем машины из ESI
     const raw = await esi.get("/machines");
 
-    // raw ожидаем как объект { [machineId]: { online, cells } }
     const entries =
       raw && typeof raw === "object" && !Array.isArray(raw)
         ? Object.entries(raw as Record<string, MachineRaw>)
         : [];
 
-    const machines = entries.map(([id, m]) => toUi(id, m));
+    // 3) склеиваем
+    const boxes: BoxUi[] = entries.map(([id, m]) => {
+      const stats = toStats(id, m);
+      const meta = metaMap[id];
 
-    // можно сортировать как угодно, пусть будет по id
-    machines.sort((a, b) => a.id.localeCompare(b.id));
+      return {
+        ...stats,
+        title: meta?.name || id,
+        address: meta?.full_address ?? null,
+      };
+    });
 
-    const res = NextResponse.json({ ok: true, machines }, { status: 200 });
+    boxes.sort((a, b) => a.id.localeCompare(b.id));
+
+    const res = NextResponse.json({ ok: true, boxes }, { status: 200 });
     res.headers.set("Cache-Control", "no-store");
     return res;
   } catch (e: any) {
-    const msg = e?.message ? String(e.message) : "Unknown error";
-    const res = NextResponse.json({ ok: false, error: msg }, { status: 502 });
+    console.error("boxesName error:", e);
+    const res = NextResponse.json(
+      { ok: false, error: e?.message ?? String(e) },
+      { status: 502 }
+    );
     res.headers.set("Cache-Control", "no-store");
     return res;
   }
