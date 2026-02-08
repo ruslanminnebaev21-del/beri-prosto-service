@@ -1,5 +1,5 @@
 // beri-prosto-service/lib/repos/orders.ts
-import { pool } from "@/lib/db";
+import { getPool } from "@/lib/db";
 
 export type OrderWithUserAndProduct = {
   id: string; // UUID
@@ -88,6 +88,7 @@ export async function listOrders(params: ListOrdersParamsRepo): Promise<OrderWit
     limit $2 offset $3
   `;
 
+  const pool = getPool();
   const { rows } = await pool.query(sql, [statuses, limit, offset]);
 
   return rows.map((r: any) => ({

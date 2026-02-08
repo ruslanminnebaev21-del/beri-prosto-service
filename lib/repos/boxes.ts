@@ -1,5 +1,6 @@
 // lib/repos/boxes.ts
-import { pool } from "@/lib/db";
+import { getPool } from "@/lib/db";
+
 
 export type BoxRow = {
   id: number;
@@ -24,6 +25,7 @@ export async function getBoxes(): Promise<BoxRow[]> {
     from public.boxes
     order by id asc
   `;
+  const pool = getPool();
   const r = await pool.query(q);
   return r.rows as BoxRow[];
 }
@@ -35,6 +37,7 @@ export async function getBoxesMetaMap(): Promise<Record<string, BoxMeta>> {
     from public.boxes
     where internal_number is not null
   `;
+  const pool = getPool();
   const r = await pool.query(q);
 
   const map: Record<string, BoxMeta> = {};
