@@ -232,12 +232,12 @@ export default function OrdersPage() {
                 </div>
 
                 <div className={styles.orderKpi}>
-                  <div className={styles.orderKpiLabel}>С</div>
+                  <div className={styles.orderKpiLabel}>Начало</div>
                   <div className={styles.orderKpiValue}>{dmy(o.paid_at)}</div>
                 </div>
 
                 <div className={styles.orderKpi}>
-                  <div className={styles.orderKpiLabel}>До</div>
+                  <div className={styles.orderKpiLabel}>Конец</div>
                   <div className={styles.orderKpiValue}>{dmy(o.refund_date)}</div>
                 </div>
               </div>
