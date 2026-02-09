@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { esi } from "@/lib/esiClient";
 import { getBoxesMetaMap } from "@/lib/repos/boxes";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +64,7 @@ function toStats(id: string, m: MachineRaw) {
 
 export async function GET() {
   try {
+    await requireAdmin();
     if (!process.env.ESI_TOKEN) {
       return NextResponse.json(
         { ok: false, error: "ESI_TOKEN is not set" },
@@ -100,9 +102,11 @@ export async function GET() {
     return res;
   } catch (e: any) {
     console.error("boxesName error:", e);
+    const msg = e?.message ?? String(e);
+    const status = msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 502;
     const res = NextResponse.json(
-      { ok: false, error: e?.message ?? String(e) },
-      { status: 502 }
+      { ok: false, error: msg },
+      { status }
     );
     res.headers.set("Cache-Control", "no-store");
     return res;

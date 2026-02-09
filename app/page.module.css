@@ -1,5 +1,82 @@
 /* app/page.module.css */
+/* app/page.module.css */
 
+/* ===== Auth ===== */
+.authShell {
+  --shell-max: 1480px;
+  max-width: var(--shell-max);
+  margin: 0 auto;
+  padding: 18px 18px 46px;
+}
+
+@media (max-width: 980px) {
+  .authShell {
+    padding: 12px 12px 32px;
+  }
+}
+
+.authPage {
+  min-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+  padding: 0 0 32px;
+}
+
+.authCard {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
+  display: grid;
+  gap: 12px;
+}
+
+.authTitle {
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-h1);
+  margin: 0;
+}
+
+.authForm {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.authLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.authInput {
+  height: 48px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: #fff;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.authInput:focus {
+  outline: none;
+  border-color: var(--border-success);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.04);
+}
+
+.authHint {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
 /* ===== App Shell ===== */
 .appShell {
   --shell-max: 1480px;

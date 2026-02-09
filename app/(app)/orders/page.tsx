@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "../page.module.css";
+import styles from "../../page.module.css";
 
 type User = {
   id: number;
@@ -215,7 +215,7 @@ export default function OrdersPage() {
                 <div className={styles.orderHeadLeft}>
                   <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
                   <span className={styles.orderCell}>
-                    {o.product?.model_name ? `${o.product.model_name} · ` : ""}
+                    {o.product?.model_name ? `${o.product.model_name}` : ""}
                   </span>
                 </div>
 

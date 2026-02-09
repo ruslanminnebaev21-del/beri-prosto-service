@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import styles from "../page.module.css";
+import styles from "../../page.module.css";
 
 type Machine = {
   id: string; // PST_0702

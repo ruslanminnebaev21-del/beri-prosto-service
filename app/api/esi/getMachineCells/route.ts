@@ -1,6 +1,7 @@
 // app/api/esi/getMachineCells/route.ts
 import { NextResponse } from "next/server";
 import { esi } from "@/lib/esiClient";
+import { requireAdmin } from "@/lib/requireAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ function sortCellNum(a: string, b: string) {
 
 export async function GET(req: Request) {
   try {
+    await requireAdmin();
     if (!process.env.ESI_TOKEN) {
       return NextResponse.json(
         { ok: false, error: "ESI_TOKEN is not set" },
@@ -79,9 +81,11 @@ export async function GET(req: Request) {
     return res;
   } catch (e: any) {
     console.error("getMachineCells error:", e);
+    const msg = e?.message ?? String(e);
+    const status = msg === "UNAUTHORIZED" ? 401 : msg === "FORBIDDEN" ? 403 : 502;
     const res = NextResponse.json(
-      { ok: false, error: e?.message ?? String(e) },
-      { status: 502 }
+      { ok: false, error: msg },
+      { status }
     );
     res.headers.set("Cache-Control", "no-store");
     return res;
