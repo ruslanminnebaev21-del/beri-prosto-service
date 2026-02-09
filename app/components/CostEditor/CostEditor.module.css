@@ -1,0 +1,334 @@
+.wrap {
+  width: 100%;
+}
+
+.empty {
+  padding: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.emptyTitle {
+  font-weight: 700;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.emptySub {
+  margin-top: 6px;
+  font-size: 13px;
+  color: rgba(15, 23, 42, 0.56);
+}
+
+/* Header */
+.headerTop {
+  padding: 6px 0 10px;
+}
+
+.headerTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.headerSub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.56);
+  line-height: 1.25;
+}
+
+/* Product row */
+.productRow {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px;
+  align-items: start;
+
+  padding: 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.productText {
+  min-width: 0;
+}
+
+.productName {
+  font-size: 10px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.15;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.productCodes {
+  margin-top: 5px;
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.7);
+  line-height: 1.2;
+}
+
+.productImgWrap {
+  width: 40px;
+  height: 55px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+
+  background: #f2f4f7;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+}
+
+.productImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.productImgPh {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.03));
+}
+
+.productImgLoading {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* Section title */
+.sectionTitle {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.7);
+}
+
+/* Error */
+.err {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: rgba(127, 29, 29, 0.95);
+  font-size: 13px;
+}
+
+/* Table */
+.table {
+  margin-top: 10px;
+  border-radius: 18px;
+  overflow: hidden;
+
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px; /* 96px под кнопку */
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid rgba(16, 24, 40, 0.07);
+}
+
+.tr:first-child {
+  border-top: none;
+}
+
+.trHead {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.th {
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.6);
+  letter-spacing: 0.03em;
+}
+
+.td {
+  min-width: 0; /* важно для grid + input */
+}
+
+.tdRight {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+/* чтобы кнопка не растягивалась и держала фикс ширину */
+.btnPrimary {
+  width: 96px;
+  flex: 0 0 96px;
+}
+
+/* чтобы инпуты занимали ширину ячейки */
+.input {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+.input {
+  width: 100%;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0 12px;
+  outline: none;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.input:focus {
+  border-color: rgba(47, 111, 98, 0.55);
+  box-shadow: 0 0 0 3px rgba(47, 111, 98, 0.12);
+}
+
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.9);
+  color: rgba(15, 23, 42, 0.75);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconBtn:disabled {
+  opacity: 0.6;
+}
+
+.skel {
+  padding: 14px 12px;
+  font-size: 13px;
+  color: rgba(15, 23, 42, 0.56);
+}
+
+.emptyRows {
+  padding: 14px 12px;
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.56);
+  background-color: #a4a4a40f;
+}
+
+/* Actions */
+.actions {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  white-space: nowrap;   /* ключевая строка */
+}
+
+.actionsRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;        /* прижали вправо всю правую группу */
+  flex: 1 1 auto;           /* группа может сжиматься */
+  min-width: 0;             /* критично для ellipsis во flex */
+  justify-content: flex-end;
+
+}
+
+.hint {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.56);
+  flex: 1 1 auto;           /* занимает “середину”, но сжимается */
+  min-width: 0;             /* критично */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  text-align: left;  
+}
+
+.btnGhost {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.9);
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 12px;
+  flex: 0 0 auto;
+}
+
+.btnPrimary {
+  flex: 0 0 auto;
+  padding: 11px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(47, 111, 98, 0.24);
+  background: rgba(255, 255, 255, 0.90);
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.01);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+
+.btnPrimary:disabled {
+  opacity: 0.55;
+}
+.inputError {
+  border-color: rgba(220, 38, 38, 0.55);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.historyCost {
+  width: 100%;
+  margin-top: 10px;
+}
+.historyTitle {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 1);
+  flex: 1 1 auto;           /* занимает “середину”, но сжимается */
+  min-width: 0;             /* критично */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;  
+}
+.hintRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.hintDelete {
+  border: none;
+  background: transparent;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.hintDelete:hover {
+  color: #e5484d;
+}

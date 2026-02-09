@@ -1,0 +1,221 @@
+/* wb-app/app/components/WBTopbar/WBTopbar.module.css */
+
+.topbar {
+  border-radius: var(--r-2xl);
+  background: linear-gradient(180deg, var(--cardHi), var(--cardLo));
+  border: 1px solid var(--stroke);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.topbarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.topbarCenter {
+  display: flex;
+  justify-content: right;
+}
+
+@media (max-width: 980px) {
+  .topbarCenter {
+    justify-content: flex-end;
+  }
+}
+
+.profileMini {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.1);
+  background: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  user-select: none;
+}
+.profileMini:active {
+  transform: translateY(0.5px);
+}
+
+.profileText {
+  line-height: 1.1;
+}
+
+.profileName {
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.profileSub {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+
+}
+
+.cabinetChevron {
+  font-size: 12px;
+  opacity: 0.7;
+  line-height: 1;
+  margin-left: 2px;
+}
+
+/* popover */
+.cabinetPopover {
+  width: 320px;
+  max-width: calc(100vw - 24px);
+
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--stroke);
+
+  overflow: hidden;
+
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 20px 40px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.cabinetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.cabinetTitle {
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.cabinetClose {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.85);
+  color: rgba(15, 23, 42, 0.75);
+  cursor: pointer;
+}
+
+.cabinetClose:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.cabinetEmpty {
+  padding: 14px 12px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.cabinetList {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 8px;
+  max-height: min(420px, calc(100vh - 140px));
+  overflow: auto;
+}
+
+.cabinetItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  text-align: left;
+  padding: 10px 10px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+}
+
+.cabinetItem:hover {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(150, 180, 174, 0.45);
+}
+
+.cabinetItemLeft {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cabinetItemName {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cabinetItemMeta {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cabinetPill {
+  flex: 0 0 auto;
+  min-width: 44px;
+  height: 26px;
+  padding: 0 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+
+  border: 1px solid rgba(16, 24, 40, 0.10);
+}
+
+.cabinetPillOn {
+  background: rgba(47, 111, 98, 0.14);
+  color: rgba(47, 111, 98, 0.95);
+  border-color: rgba(47, 111, 98, 0.25);
+}
+
+.cabinetPillOff {
+  background: rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.70);
+}
