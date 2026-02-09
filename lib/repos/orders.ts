@@ -25,6 +25,7 @@ export type OrderWithUserAndProduct = {
   product: {
     id: number;
     name: string | null;
+    model_name: string | null;
   };
 
   box: {
@@ -73,8 +74,9 @@ export async function listOrders(params: ListOrdersParamsRepo): Promise<OrderWit
       u.email as u_email,
       u.phone as u_phone,
 
-      p.id as p_id,
-      p.name as p_name,
+    p.id as p_id,
+    p.name as p_name,
+    p.model_name as p_model_name,
 
       b.id as b_id,
       b.name as b_name
@@ -115,6 +117,7 @@ export async function listOrders(params: ListOrdersParamsRepo): Promise<OrderWit
     product: {
       id: Number(r.p_id),
       name: r.p_name ?? null,
+      model_name: r.p_model_name ?? null,
     },
 
     box: {

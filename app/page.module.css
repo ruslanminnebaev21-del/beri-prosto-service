@@ -1,12 +1,38 @@
 /* app/page.module.css */
 
+/* ===== App Shell ===== */
+.appShell {
+  --shell-max: 1480px;
+  --shell-pad: 18px;
+  --shell-gap: 18px;
+  --menu-w: 84px;
+
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 18px 18px 46px;
+  position: relative;
+}
+
+@media (max-width: 980px) {
+  .appShell {
+    padding: 12px 12px 32px;
+  }
+}
+
 /* ===== Page ===== */
 .page {
   min-height: 100vh;
-  padding: 32px 20px 48px;
-  background: var(--bg-page);
-  max-width: 1140px;
-  margin: 0 auto;
+  padding: 0px 20px 48px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-left: calc(var(--menu-w) + var(--shell-gap));
+}
+
+@media (max-width: 980px) {
+  .page {
+    margin-left: 0;
+    padding: 0px 0px 32px;
+  }
 }
 
 /* ===== Header ===== */
@@ -15,13 +41,21 @@
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
   font-size: 21px;
   font-weight: 900;
   line-height: 1.2;
   letter-spacing: -0.02em;
   color: var(--text-h1);
   margin: 0;
-  margin-left: 16px;
   width: 100%;
   
 
@@ -71,14 +105,14 @@
   
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 10px;
 }
 .content {
   margin: 0 auto;
   margin-bottom: 40px;
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 20px;
+  gap: 15px;
 }
 
 @media (max-width: 1024px) {
@@ -95,8 +129,9 @@
 
 /* ===== Card ===== */
 .card {
-  background: var(--bg-card);
+  background: linear-gradient(#ffffffeb, #ffffffbd);
   border-radius: 22px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
   padding: 16px;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
@@ -247,7 +282,9 @@
 
 }
 .btnService {
-  background: var(--btn-service);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border-radius: 22px;
   color: #404040;
 }
 /* ===== Select ===== */
@@ -265,11 +302,11 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
-
-  border-radius: 16px;
-  border: 1px solid var(--border-soft);
-
-  background-color: var(--bg-card);
+  position: relative;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border-radius: 22px;
+  
   color: var(--text-primary);
 
   font-size: 14px;
@@ -277,18 +314,20 @@
   line-height: 1.2;
 
   cursor: pointer;
+}
 
-  /* стрелка */
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
-    linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 22px) 50%,
-    calc(100% - 16px) 50%;
-  background-size:
-    6px 6px,
-    6px 6px;
-  background-repeat: no-repeat;
+.select::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: translateY(-60%) rotate(45deg);
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 .select:hover {
@@ -321,8 +360,8 @@
   margin-top: 8px;
   padding: 6px;
   border-radius: 16px;
-  border: 1px solid var(--border-soft);
-  background: var(--bg-card);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   max-height: 280px;
   overflow: auto;
@@ -376,7 +415,7 @@
   align-items: center;
   gap: 14px;
 
-  padding: 16px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border-soft);
 }
 
@@ -434,9 +473,9 @@
 /* Orders card layout */
 
 .cardOrders {
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.10);
-  border-radius: 18px;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
   padding: 14px 14px 12px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
   min-width: 0;
@@ -522,7 +561,9 @@
   padding: 10px 10px;
   border-radius: 14px;
   border: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(15, 23, 42, 0.01);
+  /* background: rgba(15, 23, 42, 0.01); */
+  background: #ffffffc7; 
+  /* box-shadow: inset 0 1px #ffffffe6, 0 12px 18px #0f172a0d; */
 }
 
 .orderKpiLabel {
@@ -546,6 +587,8 @@
   border-radius: 14px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(15, 23, 42, 0.01);
+  background: #ffffffc7; 
+  /* box-shadow: inset 0 1px #ffffffe6, 0 12px 18px #0f172a0d; */
 }
 
 .orderCodeRow {
@@ -616,13 +659,23 @@
 
 /* Orders title */
 .titleOrders {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-h1);
+  margin: 0;
+  width: 100%;
+  
 }
 
 /* Footer */
@@ -641,7 +694,7 @@
 .orderFooterText {
   font-size: 12px;
   color: var(--text-muted);
-  font-weight: 700;
+  font-weight: 300;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

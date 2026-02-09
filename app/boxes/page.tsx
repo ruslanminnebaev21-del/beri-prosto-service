@@ -145,7 +145,7 @@ export default function AllBoxesPage() {
   }, [machines.length]);
 
   return (
-    <main className={styles.page}>
+    <>
       <header className={styles.header} />
 
       {/* ===== Постаматы ===== */}
@@ -293,6 +293,6 @@ export default function AllBoxesPage() {
           <div className={styles.loadingDot} />
         </div>
       )}
-    </main>
+    </>
   );
 }

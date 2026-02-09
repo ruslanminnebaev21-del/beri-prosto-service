@@ -15,6 +15,7 @@ type User = {
 type Product = {
   id: number;
   name: string | null;
+  model_name: string | null;
 };
 type Box = {
   id: number;
@@ -185,11 +186,11 @@ export default function OrdersPage() {
   }, [rows]);
 
   return (
-    <main className={styles.page}>
-      <header className={styles.header} />
+    <>
+      {/* <header className={styles.header} /> */}
 
       <section className={styles.content}>
-        <h1 className={styles.title}>Аренды</h1>
+        {/* <h1 className={styles.title}>Аренды</h1> */}
         <div className={styles.titleOrders}>
           <span>Текущие аренды</span>
           <span>{loading ? "Загружаю…" : countLabel}</span>
@@ -214,8 +215,7 @@ export default function OrdersPage() {
                 <div className={styles.orderHeadLeft}>
                   <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
                   <span className={styles.orderCell}>
-                    {o.box?.name ? `${o.box.name} · ` : ""}
-                    ячейка {o.cell_id ?? "—"}
+                    {o.product?.model_name ? `${o.product.model_name} · ` : ""}
                   </span>
                 </div>
 
@@ -261,7 +261,7 @@ export default function OrdersPage() {
 
                 <div className={styles.orderUserContacts}>
                   {o.user?.phone ? (
-                    <a className={styles.orderLink} href={`tel:${o.user.phone}`}>
+                    <a className={styles.orderLink} href={`tel:${formatRuPhone(o.user.phone)}`}>
                       {formatRuPhone(o.user.phone)}
                     </a>
                   ) : (
@@ -278,7 +278,13 @@ export default function OrdersPage() {
 
               {/* footer */}
               <div className={styles.orderFooter}>
-                <span className={styles.orderFooterText}>ID: {o.id}</span>
+                <div className={styles.orderFooterText}>
+                  <span className={styles.orderFooterText}>
+                    {o.box?.name ? `${o.box.name} · ` : ""}
+                    ячейка {o.cell_id ?? "—"}
+                  </span>
+                  <span className={styles.orderFooterText}>ID: {o.id}</span>
+                </div>
                 <span className={styles.orderStatus}>{statusLabel(o.status)}</span>
               </div>
             </article>
@@ -297,6 +303,6 @@ export default function OrdersPage() {
           <div className={styles.loadingDot} />
         </div>
       )}
-    </main>
+    </>
   );
 }
