@@ -35,7 +35,7 @@ export type OrderWithUserAndProduct = {
 };
 
 export type ListOrdersParamsRepo = {
-  statuses: string[]; // ["paid","received"]
+  statuses: string[]; // example: ["paid","pending_review","received"]
   limit?: number;
   offset?: number;
 };

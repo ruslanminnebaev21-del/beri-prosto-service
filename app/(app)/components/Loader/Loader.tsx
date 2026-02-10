@@ -1,7 +1,7 @@
-// wb-app/app/components/Loader/Loader.tsx
+// app/components/Loader/Loader.tsx
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import styles from "./Loader.module.css";
 
@@ -15,37 +15,35 @@ type LoaderProps = {
 
 export default function Loader({
   open,
-  text = "Секундочку, считаю...",
+  text = "Секундочку, получаю данные...",
   closeOnBackdrop = false,
   onClose,
 }: LoaderProps) {
-  const mountRef = useRef<HTMLElement | null>(null);
-  const elRef = useRef<HTMLDivElement | null>(null);
-
-  // создаем контейнер один раз (под портал)
-  if (!elRef.current && typeof document !== "undefined") {
-    elRef.current = document.createElement("div");
-  }
+  const [mount, setMount] = useState<HTMLElement | null>(null);
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
 
   // гарантируем mount point
   useEffect(() => {
     if (typeof document === "undefined") return;
 
-    let mount = document.getElementById("wb-portal-root") as HTMLElement | null;
-    if (!mount) {
-      mount = document.createElement("div");
-      mount.id = "wb-portal-root";
-      document.body.appendChild(mount);
+    let root = document.getElementById("beri-portal-root") as HTMLElement | null;
+    if (!root) {
+      root = document.createElement("div");
+      root.id = "beri-portal-root";
+      document.body.appendChild(root);
     }
-    mountRef.current = mount;
 
-    const el = elRef.current!;
-    mount.appendChild(el);
+    const portalEl = document.createElement("div");
+    root.appendChild(portalEl);
+    setMount(root);
+    setEl(portalEl);
 
     return () => {
       try {
-        mount.removeChild(el);
+        root.removeChild(portalEl);
       } catch {}
+      setEl(null);
+      setMount(null);
     };
   }, []);
 
@@ -87,9 +85,6 @@ export default function Loader({
       </div>
     );
   }, [open, text, closeOnBackdrop, onClose]);
-
-  const mount = mountRef.current;
-  const el = elRef.current;
 
   if (!mount || !el) return null;
   return createPortal(node, el);

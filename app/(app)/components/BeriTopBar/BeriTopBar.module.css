@@ -1,9 +1,9 @@
-/* wb-app/app/components/WBTopbar/WBTopbar.module.css */
+/* wb-app/app/components/BeriTopBar/BeriTopBar.module.css */
 
 .topbar {
-  border-radius: var(--r-2xl);
-  background: linear-gradient(180deg, var(--cardHi), var(--cardLo));
-  border: 1px solid var(--stroke);
+  border-radius: 22px;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid var(--border-card);
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
 

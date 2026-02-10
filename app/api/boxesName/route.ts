@@ -1,4 +1,4 @@
-// app/api/db/boxesName/route.ts
+// app/api/boxesName/route.ts
 import { NextResponse } from "next/server";
 import { esi } from "@/lib/esiClient";
 import { getBoxesMetaMap } from "@/lib/repos/boxes";

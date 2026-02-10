@@ -1,25 +1,21 @@
-// app/api/orders/route.ts
+// app/api/orders/finance/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getOrdersPaidReceivedOrPendingReview } from "@/lib/services/ordersService";
 import { requireAdmin } from "@/lib/requireAdmin";
+import { getOrdersFinanceByBoxes } from "@/lib/services/ordersService";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function toNum(v: string | null) {
-  if (v == null) return undefined;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : undefined;
-}
 
 export async function GET(req: NextRequest) {
   try {
     await requireAdmin();
     const { searchParams } = new URL(req.url);
 
-    const result = await getOrdersPaidReceivedOrPendingReview({
-      limit: toNum(searchParams.get("limit")),
-      offset: toNum(searchParams.get("offset")),
+    const result = await getOrdersFinanceByBoxes({
+      dateFrom: searchParams.get("dateFrom") ?? undefined,
+      dateTo: searchParams.get("dateTo") ?? undefined,
+      boxIds: searchParams.get("boxIds") ?? undefined,
+      statuses: searchParams.get("statuses") ?? undefined,
     });
 
     return NextResponse.json(result, { status: 200 });

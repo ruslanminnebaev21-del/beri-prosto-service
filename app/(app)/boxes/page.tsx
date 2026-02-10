@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "../../page.module.css";
+import { useGlobalLoader } from "../../components/GlobalLoaderProvider";
 
 type Machine = {
   id: string; // PST_0702
@@ -22,6 +23,7 @@ type CellUi = {
 };
 
 export default function AllBoxesPage() {
+  const gl = useGlobalLoader();
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [machines, setMachines] = useState<Machine[]>([]);
@@ -34,7 +36,8 @@ export default function AllBoxesPage() {
   const [cells, setCells] = useState<CellUi[]>([]);
 
   const fetchMachines = async (alive?: { current: boolean }) => {
-    try {
+    return gl.track(async () => {
+      try {
       setLoading(true);
       setErr(null);
 
@@ -67,7 +70,8 @@ export default function AllBoxesPage() {
     } finally {
       if (alive && !alive.current) return;
       setLoading(false);
-    }
+      }
+    });
   };
 
   // ВАЖНО: этот эндпоинт должен существовать.
@@ -81,7 +85,8 @@ export default function AllBoxesPage() {
       return;
     }
 
-    try {
+    return gl.track(async () => {
+      try {
       setCellsLoading(true);
       setCellsErr(null);
 
@@ -109,7 +114,8 @@ export default function AllBoxesPage() {
     } finally {
       if (alive && !alive.current) return;
       setCellsLoading(false);
-    }
+      }
+    });
   };
 
   useEffect(() => {
@@ -146,11 +152,11 @@ export default function AllBoxesPage() {
 
   return (
     <>
-      <header className={styles.header} />
+      
 
       {/* ===== Постаматы ===== */}
       <section className={styles.content}>
-        <h1 className={styles.title}>Постаматы</h1>
+        {/* <h1 className={styles.title}>Постаматы</h1> */}
         {/* <div className={styles.sub}>{loading ? "Загружаю…" : countLabel}</div> */}
 
         {err && (
@@ -285,14 +291,6 @@ export default function AllBoxesPage() {
           )}
         </div>
       </section>
-
-      {(loading || cellsLoading) && (
-        <div className={styles.loadingLine}>
-          <div className={styles.loadingDot} />
-          <div className={styles.loadingDot} />
-          <div className={styles.loadingDot} />
-        </div>
-      )}
     </>
   );
 }

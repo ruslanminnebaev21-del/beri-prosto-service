@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import GlobalLoaderProvider from "./components/GlobalLoaderProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,6 +19,13 @@ export const metadata: Metadata = {
   description: "Service panel",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -26,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <GlobalLoaderProvider>{children}</GlobalLoaderProvider>
       </body>
     </html>
   );

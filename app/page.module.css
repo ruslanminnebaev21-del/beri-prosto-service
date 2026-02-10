@@ -100,6 +100,8 @@
 .page {
   min-height: 100vh;
   padding: 0px 20px 48px;
+  padding-left: 0;
+  padding-right: 0;
   flex: 1 1 auto;
   min-width: 0;
   margin-left: calc(var(--menu-w) + var(--shell-gap));
@@ -209,20 +211,17 @@
   background: linear-gradient(#ffffffeb, #ffffffbd);
   border-radius: 22px;
   border: 1px solid rgba(16, 24, 40, 0.08);
-  padding: 16px;
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
-}
+
 
 .cardTop {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  margin: 16px;
 }
 
 .cardTitle {
@@ -346,23 +345,22 @@
 
 .btn {
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 12px;
   border: none;
   border-radius: 16px;
-  height: 48px;
   background: var(--btn-primary);
   color: #fff;
   font-size: var(--btn-font-size);
   font-weight: var(--btn-font-weight);
   text-align: center;
-  cursor: pointer;
-
+  cursor: pointer
 }
 .btnService {
   border: 1px solid rgba(16, 24, 40, 0.08);
   background: linear-gradient(#ffffffeb, #ffffffbd);
   border-radius: 22px;
   color: #404040;
+  font-size: 12px;
 }
 /* ===== Select ===== */
 
@@ -482,11 +480,14 @@
 /* ===== Cells block ===== */
 
 .cellsList {
-  margin-top: 8px;
-  border-top: 1px solid var(--border-soft);
+  
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+
 }
 
-.cellRow {
+/* .cellRow {
   display: grid;
   grid-template-columns: 90px 1fr;
   align-items: center;
@@ -494,16 +495,26 @@
 
   padding: 10px 0;
   border-bottom: 1px solid var(--border-soft);
+} */
+.cellRow {
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  border-radius: 22px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 20px;
 }
-
 .cellLeft {
   display: grid;
-  gap: 10px;
-  align-content: start;
+  gap: 5px;
+  align-content: center;
 }
 
 .cellNo {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-primary);
   font-weight: 700;
   line-height: 1.2;
@@ -511,7 +522,7 @@
 
 .cellPin {
   
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-muted);
   font-weight: 700;
   line-height: 1.2;
@@ -533,9 +544,8 @@
 }
 
 @media (max-width: 640px) {
-  .cellRow {
-    grid-template-columns: 80px 1fr;
-    gap: 12px;
+  .cellsList {
+    grid-template-columns: 1fr;
   }
 
   .cellBtns {
@@ -740,9 +750,9 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: linear-gradient(#ffffffeb, #ffffffbd);
+  /* background: linear-gradient(#ffffffeb, #ffffffbd);
   border: 1px solid rgba(16, 24, 40, 0.08);
-  border-radius: 22px;
+  border-radius: 22px; */
   padding: 16px 18px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.01);
   font-size: 21px;
@@ -778,4 +788,932 @@
   min-width: 0;
   flex: 1 1 auto;
   display: block;
+}
+
+
+/* UNIT */
+
+/* Scoped tokens + styles for Unit page (so it doesn't override other pages). */
+.unitScope {
+  --text: #0f172a;
+  --muted: rgba(15, 23, 42, 0.56);
+  --divider: rgba(16, 24, 40, 0.07);
+  --accentRing: rgba(47, 111, 98, 0.14);
+  --accent: #ff9f0a;
+}
+
+/* ===== Grid ===== */
+.gridUnit {
+  display: grid;
+  grid-template-columns: 1fr 0.9fr 1.35fr;
+  gap: 16px;
+}
+.gridUnit > * {
+  min-width: 0;
+}
+
+@media (max-width: 1280px) {
+  .gridUnit {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .gridUnit {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cardWide {
+  grid-column: 1 / -1;
+  background: linear-gradient(#ffffffeb, #ffffffbd);
+  border-radius: 22px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.unitScope .cardNoClip {
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+}
+
+/* ===== Card header rows ===== */
+.unitScope .cardHeadRow {
+  padding: 14px 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  line-height: 1;
+}
+
+.unitScope .cardTitle {
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.unitScope .cardSubtitle {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.unitScope .statusPill {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.80);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 12px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+/* ===== Controls ===== */
+.controlsRow {
+  /* top padding gives room for .filterBadge with negative offsets */
+  padding: 6px 18px 18px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 12px;
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  height: 60px;
+}
+.controlsRow > * {
+  height: 100%;
+}
+
+
+.unitScope .selectWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.unitScope .selectHint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.selectUnit {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+
+  font-size: 12px;
+  
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: left;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 10px 18px rgba(15, 23, 42, 0.06);
+  transition: box-shadow 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+}
+
+
+
+.selectUnit:hover {
+  transform: translateY(-1px);
+}
+
+.selectUnit:focus-visible {
+  border-color: rgba(47, 111, 98, 0.32);
+  box-shadow:
+    0 0 0 6px var(--accentRing),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 20px rgba(15, 23, 42, 0.08);
+}
+
+.datePopover {
+  position: absolute;
+  z-index: 260;
+  width: 316px;
+  max-width: min(316px, calc(100vw - 32px));
+
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 20px 40px rgba(0, 0, 0, 0.10);
+
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+.dateHead {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--divider);
+  background: rgba(255, 255, 255, 0.70);
+}
+
+.dateTitle {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.dateNav {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke2);
+  background: rgba(255, 255, 255, 0.85);
+  color: rgba(15, 23, 42, 0.72);
+  line-height: 1;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+}
+
+.dateNav:hover {
+  transform: translateY(-1px);
+  border-color: rgba(47, 111, 98, 0.26);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.dateWeek {
+  padding: 8px 10px;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.dateWeekDay {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.dateGrid {
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.dateRow {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dateCell {
+  height: 32px;
+}
+
+.dateDay {
+  height: 32px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.14s ease;
+}
+
+.dateDay:hover {
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(16, 24, 40, 0.08);
+}
+
+.dateDayInRange {
+  background: var(--accentSoft);
+  border-color: rgba(47, 111, 98, 0.14);
+}
+
+.dateDaySelected {
+  background: var(--accent);
+  border-color: rgba(47, 111, 98, 0.32);
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.dateDayDisabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dateDay:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--accentRing);
+}
+
+
+.btnUnit {
+  padding: 12px 12px;
+  border: none;
+  border-radius: 16px;
+  background: var(--btn-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: var(--btn-font-weight);
+  text-align: center;
+  cursor: pointer
+}
+
+
+.btnUnit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 5px rgba(15, 23, 42, 0.05);
+}
+
+.btnUnit:active {
+  transform: translateY(0);
+}
+
+.btnUnit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btnFilter {
+  padding: 10px 13px;
+  font-size: 9px;
+  line-height: 1;
+  padding: 12px 12px;
+  border: none;
+  border-radius: 16px;
+  background: var(--btn-primary);
+  color: #fff;
+  font-weight: var(--btn-font-weight);
+  text-align: center;
+  cursor: pointer
+}
+
+/* ===== Filters popover ===== */
+.filterAnchor {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.filterAnchor {
+  flex: 0 0 auto;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .filterAnchor {
+    margin-left: auto;
+  }
+}
+
+.navItem {
+  width: 39px;
+  height: 39px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 20px rgba(15, 23, 42, 0.06);
+  color: rgba(15, 23, 42, 0.72);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.navItem:hover {
+ 
+  border-color: var(--btn-primary);
+  
+}
+
+.filterBadge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 4px 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--btn-primary);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 8px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.filterPopover {
+  position: absolute;
+  z-index: 200;
+  width: 520px;
+  max-width: min(520px, calc(100vw - 32px));
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 1);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 20px 40px rgba(0, 0, 0, 0.10);
+}
+
+.filterBody {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  min-height: 240px;
+}
+
+.filterLeft {
+  padding: 10px;
+  border-right: 1px solid var(--divider);
+}
+
+.filterLeftItem {
+  width: 100%;
+  text-align: left;
+  padding: 6px 6px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.75);
+  cursor: pointer;
+}
+
+.filterLeftItem:hover {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.filterLeftItemActive {
+  background: rgba(15, 23, 42, 0.03);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.filterRight {
+  padding: 10px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+}
+
+.filterSearchRow {
+  display: flex;
+  align-items: center;
+}
+
+.filterSearch {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text);
+  font-size: 10px;
+  outline: none;
+}
+
+.filterList {
+  overflow: auto;
+  max-height: 160px;
+  padding-right: 6px;
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  border: 1px solid transparent;
+  padding: 2px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.filterRow:hover {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.unitScope .filterRow input[type="checkbox"] {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(16, 24, 40, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-content: center;
+  overflow: visible;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.unitScope .filterRow input[type="checkbox"]::before {
+  content: "";
+  width: 6px;
+  height: 3px;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  transform: translate(-1px, -1px) rotate(45deg);
+  transform-origin: center;
+  opacity: 0;
+}
+
+.unitScope .filterRow input[type="checkbox"]:checked {
+  background: var(--btn-primary);
+  border-color: var(--btn-primary);
+}
+
+.unitScope .filterRow input[type="checkbox"]:checked::before {
+  opacity: 1;
+}
+
+.filterRowText {
+  display: grid;
+  gap: 2px;
+}
+
+.filterRowMain {
+  font-size: 10px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.filterRowId {
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.55);
+  font-weight: 600;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+
+.filterRowSub {
+  font-size: 10px;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.filterEmpty {
+  padding: 12px;
+  color: rgba(15, 23, 42, 0.5);
+  font-size: 10px;
+}
+
+.filterActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-top: 1px solid var(--divider);
+}
+
+.filterReset {
+  border: none;
+  background: transparent;
+  color: rgba(15, 23, 42, 0.55);
+  font-size: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.filterReset:hover {
+  color: rgba(15, 23, 42, 0.8);
+}
+/* ===== Card header rows ===== */
+
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.cardSubtitle {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+/* ===== Totals block ===== */
+.bigMetric {
+  margin-left: auto;
+  text-align: right;
+}
+
+.bigMetricLabel {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.bigMetricValue {
+  margin-top: 6px;
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.metricsGrid {
+  padding: 0 18px 18px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+
+.metricItem {
+  border-radius: 18px;
+  border: 1px solid rgba(16, 24, 40, 0.08);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 12px 18px rgba(15, 23, 42, 0.05);
+  padding: 12px 12px;
+}
+
+.metricItemStrong {
+  border-color: rgba(47, 111, 98, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: var(--muted);
+}
+.metricLabelProfile {
+  font-size: 11px;
+  color: var(--muted);
+  align-items: left;
+  text-align: left;
+}
+
+.metricValue {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center; /* вертикальное выравнивание */
+  gap: 8px; 
+  line-height: 1;
+}
+
+/* ===== Table card (reports list) ===== */
+.tableHeadRow {
+  padding: 18px 18px 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid var(--divider);
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.tableTitle {
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.tableMeta {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 16px;
+  scrollbar-width: none; /* Firefox */
+}
+.tableWrap::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.trHead {
+  background: rgba(255, 255, 255, 0.40);
+}
+
+.th {
+  text-align: left;
+  padding: 14px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  /* border-top: 1px solid var(--divider); */
+}
+
+.tr {
+  transition: background 0.14s ease;
+
+}
+.trDate {
+  transition: background 0.14s ease;
+  background: #a4a4a40f;
+}
+
+.tr:hover {
+  background: rgba(255, 159, 10, 0.06);
+}
+
+.td {
+  text-align: left;
+  padding: 14px 14px;
+  white-space: nowrap;
+  border-top: 1px solid rgba(16, 24, 40, 0.06);
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.strong {
+  font-weight: 950;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+  font-weight: 950;
+  letter-spacing: -0.01em;
+}
+
+.footNote {
+  border-top: 1px solid var(--divider);
+  padding: 14px 18px;
+  font-size: 12px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.40);
+}
+
+/* ===== Trend card ===== */
+
+.cardHeadRow,
+  .controlsRow,
+  .metricsGrid,
+  .sparkWrap,
+  .sparkLegend,
+  .assistantHead,
+  .quickChips,
+  .assistantInputRow,
+  .tableHeadRow {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+.smallBadge {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 24, 40, 0.10);
+  background: rgba(255, 255, 255, 0.80);
+  color: rgba(15, 23, 42, 0.72);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.sparkWrap {
+  padding: 0 18px 10px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  width: 100%;
+  overflow: hidden; /* чтобы подсказка/тени не ломали карточку */
+}
+.sparkScroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  min-width: 0;
+
+  /* прячем скроллбар */
+  scrollbar-width: none; /* Firefox */
+}
+.sparkScroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+
+
+.sparkSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sparkLineSoft {
+  fill: none;
+  stroke: rgba(47, 111, 98, 0.18);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparkLine {
+  fill: none;
+  stroke: rgba(15, 23, 42, 0.78);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sparkFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.00), rgba(255, 255, 255, 0.26));
+  pointer-events: none;
+}
+
+.sparkLegend {
+  padding: 0 18px 18px;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.legendText {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.74);
+}
+
+/* ===== Bars (Trend) ===== */
+.barWrap {
+  height: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: stretch;
+  /* gap: 10px; */
+  padding: 6px 4px 0;
+  width: 100%;
+}
+
+.barCol {
+  flex: 1 1 0;
+  min-width: 10px;
+  width: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.barTrack {
+  width: 100%;
+  flex: 1;
+  min-height: 60px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(20, 20, 40, 0.08);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barFill {
+  width: 100%;
+  height: 0;
+  border-radius: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 159, 10, 0.52),
+    rgba(255, 159, 10, 0.16)
+  );
+  box-shadow: 0 10px 18px rgba(255, 159, 10, 0.14);
+}
+
+.barLabel {
+  font-size: 7px;
+  color: var(--muted);
+  opacity: 0.9;
+}
+.barWrap {
+  position: relative; /* важно для тултипа */
+}
+
+.barTip {
+  position: fixed;
+  transform: translate(-50%, -10px);
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(16, 24, 40, 0.12);
+  background: rgba(15, 23, 42, 0.92);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: pre;
+  pointer-events: none;
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.18);
+  z-index: 50;
+}
+.cardMid {
+  
+  display: flex;
+  flex-direction: column;
+  grid-column: span 1;
+
 }

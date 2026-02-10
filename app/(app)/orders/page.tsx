@@ -1,8 +1,9 @@
 // app/orders/page.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "../../page.module.css";
+import { useGlobalLoader } from "../../components/GlobalLoaderProvider";
 
 type User = {
   id: number;
@@ -31,7 +32,7 @@ type Order = {
   cell_id: string | null;
   total_price: number | null;
   days: number | null;
-  status: "paid" | "received" | string;
+  status: "paid" | "pending_review" | "received" | string;
   refund_date: string | null;
   paid_at: string | null;
 
@@ -46,11 +47,12 @@ type OrdersResp =
 
 function statusLabel(status: string) {
   if (status === "paid") return "Оплачено";
+  if (status === "pending_review") return "На проверке";
   if (status === "received") return "Получено";
   return status;
 }
 
-function rub(v: any) {
+function rub(v: unknown) {
   const n = Number(v);
   return (Number.isFinite(n) ? n : 0).toLocaleString("ru-RU", {
     style: "currency",
@@ -125,41 +127,51 @@ function formatRuPhone(value: string | null | undefined) {
 }
 
 export default function OrdersPage() {
+  const gl = useGlobalLoader();
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const [rows, setRows] = useState<Order[]>([]);
 
-  async function load() {
-    try {
-      setLoading(true);
-      setErr(null);
+  const load = useCallback(async () => {
+    return gl.track(async () => {
+      try {
+        setLoading(true);
+        setErr(null);
 
-      const r = await fetch("/api/orders", {
-        method: "GET",
-        headers: { Accept: "application/json" },
-        cache: "no-store",
-      });
+        const r = await fetch("/api/orders", {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+        });
 
-      const json = (await r.json().catch(() => null)) as OrdersResp | null;
+        const json = (await r.json().catch(() => null)) as OrdersResp | null;
 
-      if (!r.ok || !json || !("ok" in json) || !json.ok) {
-        setErr((json as any)?.error || `HTTP ${r.status}`);
+        if (!r.ok || !json) {
+          setErr(`HTTP ${r.status}`);
+          setRows([]);
+          return;
+        }
+
+        if (!json.ok) {
+          setErr(json.error);
+          setRows([]);
+          return;
+        }
+
+        setRows(Array.isArray(json.rows) ? json.rows : []);
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : null;
+        setErr(msg ? String(msg) : "Ошибка запроса");
         setRows([]);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      setRows(Array.isArray(json.rows) ? json.rows : []);
-    } catch (e: any) {
-      setErr(e?.message ? String(e.message) : "Ошибка запроса");
-      setRows([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+    });
+  }, [gl]);
 
   useEffect(() => {
     void load();
-  }, []);
+  }, [load]);
 
   const countLabel = useMemo(() => {
     const n = rows.length;
@@ -290,19 +302,7 @@ export default function OrdersPage() {
             </article>
           ))}
         </div>
-
-        <button type="button" className={styles.btn} onClick={load} disabled={loading}>
-          Обновить
-        </button>
       </section>
-
-      {loading && (
-        <div className={styles.loadingLine}>
-          <div className={styles.loadingDot} />
-          <div className={styles.loadingDot} />
-          <div className={styles.loadingDot} />
-        </div>
-      )}
     </>
   );
 }

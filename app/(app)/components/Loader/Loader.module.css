@@ -9,14 +9,11 @@
   display: grid;
   place-items: center;
 
-  /* важно: слой должен быть полупрозрачным */
-  background: linear-gradient(
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 0.9)
-  );
+  /* важно: слой должен быть полупрозрачным, иначе blur почти не заметен */
+  background: rgba(255, 255, 255, 0.58);
 
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(100px);
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
 
   /* часто чинит Safari/Chrome случаи, когда blur “не берется” */
   transform: translateZ(0);
@@ -37,8 +34,8 @@
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 3px solid rgba(47, 111, 98, 0.18);
-  border-top-color: #2f6f62;
+  border: 3px solid rgba(255, 159, 10, 0.18);
+  border-top-color: #ff9f0a;
   animation: wbSpin 0.9s linear infinite;
 }
 
