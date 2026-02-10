@@ -17,6 +17,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Beri Prosto Service",
   description: "Service panel",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Beri Prosto Service",
+  },
+  icons: {
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export const viewport = {
