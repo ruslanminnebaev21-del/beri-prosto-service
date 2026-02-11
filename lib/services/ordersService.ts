@@ -6,6 +6,7 @@ import {
   type GetOrdersMoneyByBoxesParams,
   type GetOrdersMoneySeriesParams,
 } from "@/lib/repos/ordersFinance";
+import { getTopProductsByOrders, type GetTopProductsParams } from "@/lib/repos/ordersTop";
 
 export type ListOrdersParams = {
   limit?: number;
@@ -25,6 +26,13 @@ export type GetOrdersFinanceSeriesParams = {
   boxIds?: string;
   statuses?: string;
   groupBy?: string;
+};
+
+export type GetOrdersTopProductsParams = {
+  dateFrom?: string;
+  dateTo?: string;
+  boxIds?: string;
+  limit?: number;
 };
 
 function clampInt(v: unknown, def: number, min: number, max: number) {
@@ -117,6 +125,30 @@ export async function getOrdersFinanceSeries(params: GetOrdersFinanceSeriesParam
       boxIds: boxIds.length ? boxIds : null,
       statuses: repoParams.statuses || ["!canceled"],
       groupBy,
+    },
+    rows,
+  };
+}
+
+export async function getOrdersTopProducts(params: GetOrdersTopProductsParams = {}) {
+  const boxIds = parseCsvNumbers(params.boxIds);
+
+  const repoParams: GetTopProductsParams = {
+    dateFrom: params.dateFrom,
+    dateTo: params.dateTo,
+    boxIds: boxIds.length ? boxIds : undefined,
+    limit: params.limit,
+  };
+
+  const rows = await getTopProductsByOrders(repoParams);
+
+  return {
+    ok: true as const,
+    meta: {
+      dateFrom: params.dateFrom,
+      dateTo: params.dateTo,
+      boxIds: boxIds.length ? boxIds : null,
+      limit: repoParams.limit ?? 5,
     },
     rows,
   };

@@ -19,6 +19,7 @@ type MachineRaw = {
 
 type BoxUi = {
   id: string; // PST_0702
+  box_id: number | null;
   title: string; // name из БД (или id)
   address: string | null;
   online: boolean;
@@ -90,6 +91,7 @@ export async function GET() {
 
       return {
         ...stats,
+        box_id: meta?.id ?? null,
         title: meta?.name || id,
         address: meta?.full_address ?? null,
       };

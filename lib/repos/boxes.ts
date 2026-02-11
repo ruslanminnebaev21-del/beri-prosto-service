@@ -29,11 +29,11 @@ export async function getBoxes(): Promise<BoxRow[]> {
   const r = await pool.query(q);
   return r.rows as BoxRow[];
 }
-export type BoxMeta = { name: string | null; full_address: string | null };
+export type BoxMeta = { id: number; name: string | null; full_address: string | null };
 
 export async function getBoxesMetaMap(): Promise<Record<string, BoxMeta>> {
   const q = `
-    select internal_number, name, full_address
+    select id, internal_number, name, full_address
     from public.boxes
     where internal_number is not null
   `;
@@ -42,11 +42,16 @@ export async function getBoxesMetaMap(): Promise<Record<string, BoxMeta>> {
 
   const map: Record<string, BoxMeta> = {};
   for (const row of r.rows as Array<{
+    id: number;
     internal_number: string;
     name: string | null;
     full_address: string | null;
   }>) {
-    map[row.internal_number] = { name: row.name, full_address: row.full_address };
+    map[row.internal_number] = {
+      id: Number(row.id),
+      name: row.name,
+      full_address: row.full_address,
+    };
   }
   return map;
 }

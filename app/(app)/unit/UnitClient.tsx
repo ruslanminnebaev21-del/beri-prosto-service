@@ -3,9 +3,11 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import styles from "../../page.module.css";
+import { useGlobalLoader } from "../../components/GlobalLoaderProvider";
 
 type BoxUi = {
   id: string;
+  box_id: number | null;
   title: string;
   address: string | null;
 };
@@ -30,6 +32,16 @@ type OrdersFinanceResp =
 
 type OrdersFinanceSeriesResp =
   | { ok: true; meta: any; rows: OrdersFinanceSeriesRow[] }
+  | { ok: false; error: string };
+
+type OrdersTopProductRow = {
+  product_name: string | null;
+  orders_count: number;
+  total_sum: number;
+};
+
+type OrdersTopProductsResp =
+  | { ok: true; meta: any; rows: OrdersTopProductRow[] }
   | { ok: false; error: string };
 
 type FilterItem = {
@@ -137,7 +149,7 @@ export default function UnitClient() {
   });
 
   const [err, setErr] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { track } = useGlobalLoader();
 
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterSearch, setFilterSearch] = useState("");
@@ -160,6 +172,7 @@ export default function UnitClient() {
   const [financeRows, setFinanceRows] = useState<OrdersFinanceRow[]>([]);
   const [seriesRows, setSeriesRows] = useState<OrdersFinanceSeriesRow[]>([]);
   const [seriesGroupBy, setSeriesGroupBy] = useState<"day" | "week">("day");
+  const [topProducts, setTopProducts] = useState<OrdersTopProductRow[]>([]);
 
   const filterBtnRef = useRef<HTMLButtonElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -233,11 +246,13 @@ export default function UnitClient() {
       }
 
       const list = Array.isArray(json.boxes) ? json.boxes : [];
-      const items: FilterItem[] = list.map((b) => ({
-        id: String(b.id),
-        label: String(b.title || b.id),
-        sub: b.address ? String(b.address) : undefined,
-      }));
+      const items: FilterItem[] = list
+        .filter((b) => b.box_id != null)
+        .map((b) => ({
+          id: String(b.box_id),
+          label: String(b.title || b.id),
+          sub: b.address ? String(b.address) : undefined,
+        }));
 
       items.sort((a, b) => a.label.localeCompare(b.label, "ru"));
       setBoxes(items);
@@ -251,8 +266,7 @@ export default function UnitClient() {
   }, [boxesLoading]);
 
   const loadRange = useCallback(async (from: string, to: string, boxIds: string[]) => {
-    try {
-      setLoading(true);
+    return track(async () => {
       setErr(null);
       const fromDate = dateFromIso(from);
       const toDate = dateFromIso(to);
@@ -265,13 +279,18 @@ export default function UnitClient() {
       qs.set("dateTo", to);
       if (boxIds.length) qs.set("boxIds", boxIds.join(","));
 
-      const [rFinance, rSeries] = await Promise.all([
+      const [rFinance, rSeries, rTop] = await Promise.all([
         fetch(`/api/orders/finance?${qs.toString()}`, {
           method: "GET",
           headers: { Accept: "application/json" },
           cache: "no-store",
         }),
         fetch(`/api/orders/finance/series?${qs.toString()}&groupBy=${groupBy}`, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+        }),
+        fetch(`/api/orders/topProducts?${qs.toString()}&limit=5`, {
           method: "GET",
           headers: { Accept: "application/json" },
           cache: "no-store",
@@ -301,9 +320,15 @@ export default function UnitClient() {
       }
 
       setSeriesRows(Array.isArray(jsonSeries.rows) ? jsonSeries.rows : []);
-    } finally {
-      setLoading(false);
-    }
+
+      const jsonTop = (await rTop.json().catch(() => null)) as OrdersTopProductsResp | null;
+      if (!rTop.ok || !jsonTop || !jsonTop.ok) {
+        setTopProducts([]);
+        return;
+      }
+
+      setTopProducts(Array.isArray(jsonTop.rows) ? jsonTop.rows : []);
+    });
   }, []);
 
   useEffect(() => {
@@ -324,6 +349,7 @@ export default function UnitClient() {
     setAppliedBoxes([]);
     setFinanceRows([]);
     setSeriesRows([]);
+    setTopProducts([]);
     setFilterSearch("");
     setFilterOpen(false);
     setPopPos(null);
@@ -504,11 +530,7 @@ export default function UnitClient() {
             </div>
 
             <div className={styles.statusPill}>
-              {loading
-                ? "Загрузка"
-                : hasFilter
-                ? `Постаматов: ${appliedBoxes.length}`
-                : "Постаматов: все"}
+              {hasFilter ? `Постаматов: ${appliedBoxes.length}` : "Постаматов: все"}
             </div>
           </div>
 
@@ -518,7 +540,6 @@ export default function UnitClient() {
                 ref={fromBtnRef}
                 type="button"
                 className={styles.selectUnit}
-                disabled={loading}
                 onClick={() => {
                   setFilterOpen(false);
                   setPopPos(null);
@@ -547,7 +568,6 @@ export default function UnitClient() {
                 ref={toBtnRef}
                 type="button"
                 className={styles.selectUnit}
-                disabled={loading}
                 onClick={() => {
                   setFilterOpen(false);
                   setPopPos(null);
@@ -576,14 +596,14 @@ export default function UnitClient() {
               onClick={() => {
                 if (fromIso && toIso) void loadRange(fromIso, toIso, appliedBoxes);
               }}
-              disabled={!fromIso || !toIso || loading}
+              disabled={!fromIso || !toIso}
               title={!fromIso || !toIso ? "Выбери даты" : undefined}
             >
               Показать
             </button>
 
             <div className={styles.filterAnchor}>
-              <button
+            <button
                 ref={filterBtnRef}
                 className={styles.navItem}
                 type="button"
@@ -808,7 +828,7 @@ export default function UnitClient() {
               <div className={styles.metricValue}>{money(financeTotals.sum)}</div>
             </div>
 
-            <div className={`${styles.metricItem} ${styles.metricItemStrong}`}>
+            <div className={`${styles.metricItem}`}>
               <div className={styles.metricLabel}>Средний чек</div>
               <div className={styles.metricValue}>{money(avgCheck)}</div>
             </div>
@@ -827,10 +847,26 @@ export default function UnitClient() {
             </div>
           </div>
 
-          <div className={styles.metricsGrid}>
-            
-                      
-            
+          <div className={styles.topGrid}>
+            {topProducts.length ? (
+              topProducts.map((p, i) => (
+                <div key={`${p.product_name ?? "product"}_${i}`} className={styles.topItem}>
+                  <div>
+                    <div className={styles.topTitle}>{p.product_name ?? "Товар"}</div>
+                    <div className={styles.topSub}>Аренд: {p.orders_count}</div>
+                  </div>
+                  
+                  <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                    <div className={styles.topTitle}>Сумма</div>
+                    <div className={styles.topSub}>{money(p.total_sum)}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={styles.topItem}>
+                <div className={styles.topProduct}>Нет данных</div>
+              </div>
+            )}
           </div>
         </div>
         {/* Card: Trend */}
@@ -847,7 +883,7 @@ export default function UnitClient() {
         <div className={styles.sparkWrap}>
           <div className={styles.sparkScroll}>
             <Bars series={trendSeries} minColWidth={10} />
-            {trendSeries.length === 0 && !loading ? (
+            {trendSeries.length === 0 ? (
               <div style={{ fontSize: 12, color: "rgba(15, 23, 42, 0.6)", paddingTop: 6 }}>Нет данных</div>
             ) : null}
           </div>
@@ -896,7 +932,7 @@ export default function UnitClient() {
                   );
                 })}
 
-                {financeRows.length === 0 && !loading && (
+                {financeRows.length === 0 && (
                   <tr className={styles.tr}>
                     <td className={styles.td} colSpan={4}>
                       Нет данных в выбранном диапазоне

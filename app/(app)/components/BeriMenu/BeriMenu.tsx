@@ -10,13 +10,13 @@ export default function BeriMenu() {
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>
+      <Link href="/" className={styles.brand}>
         <div className={styles.logoMark} aria-hidden />
         <div className={styles.brandText}>
-          <div className={styles.brandName}>Бери</div>
+          <div className={styles.brandName}>Beri</div>
           <div className={styles.brandSub}>service</div>
         </div>
-      </div>
+      </Link>
 
       <nav className={styles.nav}>
         <Link href="/boxes" title="Постаматы">
