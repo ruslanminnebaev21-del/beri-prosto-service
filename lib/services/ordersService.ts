@@ -62,7 +62,7 @@ export async function getOrdersPaidReceivedOrPendingReview(params: ListOrdersPar
   const limit = clampInt(params.limit, 50, 1, 200);
   const offset = clampInt(params.offset, 0, 0, 1_000_000);
 
-  const statuses = ["paid", "pending_review", "received"];
+  const statuses = ["paid", "pending_review", "received", "returned"];
 
   const rows: OrderWithUserAndProduct[] = await listOrders({
     statuses,

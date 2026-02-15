@@ -32,7 +32,7 @@ type Order = {
   cell_id: string | null;
   total_price: number | null;
   days: number | null;
-  status: "paid" | "pending_review" | "received" | string;
+  status: "paid" | "pending_review" | "received" | "returned" | string;
   refund_date: string | null;
   paid_at: string | null;
 
@@ -49,7 +49,22 @@ function statusLabel(status: string) {
   if (status === "paid") return "Оплачено";
   if (status === "pending_review") return "На проверке";
   if (status === "received") return "Получено";
+  if (status === "returned") return "Возвращено";
   return status;
+}
+
+function rentalsCountLabel(n: number) {
+  const last = n % 10;
+  const last2 = n % 100;
+  const word =
+    last2 >= 11 && last2 <= 14
+      ? "аренд"
+      : last === 1
+        ? "аренда"
+        : last >= 2 && last <= 4
+          ? "аренды"
+          : "аренд";
+  return `${n} ${word}`;
 }
 
 function rub(v: unknown) {
@@ -173,21 +188,6 @@ export default function OrdersPage() {
     void load();
   }, [load]);
 
-  const countLabel = useMemo(() => {
-    const n = rows.length;
-    const last = n % 10;
-    const last2 = n % 100;
-    const word =
-      last2 >= 11 && last2 <= 14
-        ? "аренд"
-        : last === 1
-          ? "аренда"
-          : last >= 2 && last <= 4
-            ? "аренды"
-            : "аренд";
-    return `${n} ${word}`;
-  }, [rows.length]);
-
   const sortedRows = useMemo(() => {
     const rank = (s: string) => (s === "paid" ? 0 : s === "received" ? 1 : 2);
     return [...rows].sort((a, b) => {
@@ -197,112 +197,175 @@ export default function OrdersPage() {
     });
   }, [rows]);
 
+  const activeOrders = useMemo(
+    () => sortedRows.filter((o) => o.status !== "returned"),
+    [sortedRows],
+  );
+  const completedOrders = useMemo(
+    () => sortedRows.filter((o) => o.status === "returned"),
+    [sortedRows],
+  );
+
+  const copyOrderId = useCallback(async (id: string) => {
+    const value = String(id || "").trim();
+    if (!value) return;
+
+    try {
+      if (navigator?.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+        return;
+      }
+    } catch {
+      // fallback below
+    }
+
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    } catch {
+      // noop
+    }
+  }, []);
+
+  const renderOrders = (orders: Order[]) => (
+    <div className={styles.grid}>
+      {orders.map((o) => (
+        <article key={o.id} className={styles.cardOrders}>
+          {/* header */}
+          <div className={styles.orderHead}>
+            <div className={styles.orderHeadLeft}>
+              <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
+              <span className={styles.orderCell}>
+                {o.product?.model_name ? `${o.product.model_name}` : ""}
+              </span>
+            </div>
+
+            <div className={styles.orderHeadRight}>
+              <div className={styles.orderPrice}>{rub(o.total_price)}</div>
+            </div>
+          </div>
+
+          {/* rent params */}
+          <div className={styles.orderGrid}>
+            <div className={styles.orderKpi}>
+              <div className={styles.orderKpiLabel}>Дней</div>
+              <div className={styles.orderKpiValue}>{o.days ?? "—"}</div>
+            </div>
+
+            <div className={styles.orderKpi}>
+              <div className={styles.orderKpiLabel}>Начало</div>
+              <div className={styles.orderKpiValue}>{dmy(o.paid_at)}</div>
+            </div>
+
+            <div className={styles.orderKpi}>
+              <div className={styles.orderKpiLabel}>Конец</div>
+              <div className={styles.orderKpiValue}>{dmy(o.refund_date)}</div>
+            </div>
+          </div>
+
+          {/* codes */}
+          <div className={styles.orderCodes}>
+            <div className={styles.orderCodeRow}>
+              <div className={styles.orderCodeLabel}>Код получения</div>
+              <div className={styles.orderCodeValue}>{o.receiving_code ?? "—"}</div>
+            </div>
+
+            <div className={styles.orderCodeRow}>
+              <div className={styles.orderCodeLabel}>Код возврата</div>
+              <div className={styles.orderCodeValue}>{o.return_code ?? "—"}</div>
+            </div>
+          </div>
+
+          {/* user */}
+          <div className={styles.orderUser}>
+            <div className={styles.orderUserName}>{userName(o.user)}</div>
+
+            <div className={styles.orderUserContacts}>
+              {o.user?.phone ? (
+                <a className={styles.orderLink} href={`tel:${formatRuPhone(o.user.phone)}`}>
+                  {formatRuPhone(o.user.phone)}
+                </a>
+              ) : (
+                <span className={styles.orderMuted}>телефон: —</span>
+              )}
+
+              {o.user?.email ? (
+                <span className={styles.orderMuted}>{o.user.email}</span>
+              ) : (
+                <span className={styles.orderMuted}>email: —</span>
+              )}
+            </div>
+          </div>
+
+          {/* footer */}
+          <div className={styles.orderFooter}>
+            <div className={styles.orderFooterText}>
+              <span className={styles.orderFooterText}>
+                {o.box?.name ? `${o.box.name} · ` : ""}
+                ячейка {o.cell_id ?? "—"}
+              </span>
+              <button
+                type="button"
+                className={styles.orderIdCopy}
+                onClick={() => void copyOrderId(o.id)}
+                title="Скопировать ID"
+                aria-label={`Скопировать ID ${o.id}`}
+              >
+                ID: {o.id}
+              </button>
+            </div>
+            <span className={styles.orderStatus}>{statusLabel(o.status)}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+
   return (
     <>
-      {/* <header className={styles.header} /> */}
-
-      <section className={styles.content}>
-        {/* <h1 className={styles.title}>Аренды</h1> */}
-        <div className={styles.titleOrders}>
-          <span>Текущие аренды</span>
-          <span>{loading ? "Загружаю…" : countLabel}</span>
-        </div>
-
-        {err && (
+      {err && (
+        <section className={styles.content}>
           <div className={styles.error}>
             <div className={styles.errorTitle}>Не получилось получить заказы</div>
             <div className={styles.errorText}>{err}</div>
           </div>
-        )}
+        </section>
+      )}
 
-        {!err && !loading && rows.length === 0 && (
-          <div className={styles.empty}>Пока заказов нет.</div>
-        )}
+      {!err && (
+        <>
+          <section className={styles.content}>
+            <div className={styles.titleOrders}>
+              <span>Текущие аренды</span>
+              <span>{loading ? "Загружаю…" : rentalsCountLabel(activeOrders.length)}</span>
+            </div>
 
-        <div className={styles.grid}>
-          {sortedRows.map((o) => (
-            <article key={o.id} className={styles.cardOrders}>
-              {/* header */}
-              <div className={styles.orderHead}>
-                <div className={styles.orderHeadLeft}>
-                  <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
-                  <span className={styles.orderCell}>
-                    {o.product?.model_name ? `${o.product.model_name}` : ""}
-                  </span>
-                </div>
+            {!loading && activeOrders.length === 0 && (
+              <div className={styles.empty}>Нет текущих аренд.</div>
+            )}
+            {activeOrders.length > 0 && renderOrders(activeOrders)}
+          </section>
 
-                <div className={styles.orderHeadRight}>
-                  <div className={styles.orderPrice}>{rub(o.total_price)}</div>
-                </div>
-              </div>
+          <section className={styles.content}>
+            <div className={styles.titleOrders}>
+              <span>Завершенные</span>
+              <span>{loading ? "Загружаю…" : rentalsCountLabel(completedOrders.length)}</span>
+            </div>
 
-              {/* rent params */}
-              <div className={styles.orderGrid}>
-                <div className={styles.orderKpi}>
-                  <div className={styles.orderKpiLabel}>Дней</div>
-                  <div className={styles.orderKpiValue}>{o.days ?? "—"}</div>
-                </div>
-
-                <div className={styles.orderKpi}>
-                  <div className={styles.orderKpiLabel}>Начало</div>
-                  <div className={styles.orderKpiValue}>{dmy(o.paid_at)}</div>
-                </div>
-
-                <div className={styles.orderKpi}>
-                  <div className={styles.orderKpiLabel}>Конец</div>
-                  <div className={styles.orderKpiValue}>{dmy(o.refund_date)}</div>
-                </div>
-              </div>
-
-              {/* codes */}
-              <div className={styles.orderCodes}>
-                <div className={styles.orderCodeRow}>
-                  <div className={styles.orderCodeLabel}>Код получения</div>
-                  <div className={styles.orderCodeValue}>{o.receiving_code ?? "—"}</div>
-                </div>
-
-                <div className={styles.orderCodeRow}>
-                  <div className={styles.orderCodeLabel}>Код возврата</div>
-                  <div className={styles.orderCodeValue}>{o.return_code ?? "—"}</div>
-                </div>
-              </div>
-
-              {/* user */}
-              <div className={styles.orderUser}>
-                <div className={styles.orderUserName}>{userName(o.user)}</div>
-
-                <div className={styles.orderUserContacts}>
-                  {o.user?.phone ? (
-                    <a className={styles.orderLink} href={`tel:${formatRuPhone(o.user.phone)}`}>
-                      {formatRuPhone(o.user.phone)}
-                    </a>
-                  ) : (
-                    <span className={styles.orderMuted}>телефон: —</span>
-                  )}
-
-                  {o.user?.email ? (
-                    <span className={styles.orderMuted}>{o.user.email}</span>
-                  ) : (
-                    <span className={styles.orderMuted}>email: —</span>
-                  )}
-                </div>
-              </div>
-
-              {/* footer */}
-              <div className={styles.orderFooter}>
-                <div className={styles.orderFooterText}>
-                  <span className={styles.orderFooterText}>
-                    {o.box?.name ? `${o.box.name} · ` : ""}
-                    ячейка {o.cell_id ?? "—"}
-                  </span>
-                  <span className={styles.orderFooterText}>ID: {o.id}</span>
-                </div>
-                <span className={styles.orderStatus}>{statusLabel(o.status)}</span>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
+            {!loading && completedOrders.length === 0 && (
+              <div className={styles.empty}>Нет завершенных аренд.</div>
+            )}
+            {completedOrders.length > 0 && renderOrders(completedOrders)}
+          </section>
+        </>
+      )}
     </>
   );
 }
