@@ -2,48 +2,48 @@
 "use client";
 
 import styles from "./BeriMenu.module.css";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function BeriMenu() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <aside className={styles.sidebar}>
-      <Link href="/" className={styles.brand}>
+      <button type="button" className={styles.brand} onClick={() => router.push("/")}>
         <div className={styles.logoMark} aria-hidden />
         <div className={styles.brandText}>
           <div className={styles.brandName}>Beri</div>
           <div className={styles.brandSub}>service</div>
         </div>
-      </Link>
+      </button>
 
       <nav className={styles.nav}>
-        <Link href="/boxes" title="Постаматы">
-          <button
-            type="button"
-            className={`${styles.navItem} ${pathname.startsWith("/boxes") ? styles.navItemActive : ""}`}
-          >
-            <IconGrid />
-          </button>
-        </Link>
+        <button
+          type="button"
+          title="Постаматы"
+          onClick={() => router.push("/boxes")}
+          className={`${styles.navItem} ${pathname.startsWith("/boxes") ? styles.navItemActive : ""}`}
+        >
+          <IconGrid />
+        </button>
 
-        <Link href="/orders" title="Заказы">
-          <button
-            type="button"
-            className={`${styles.navItem} ${pathname.startsWith("/orders") ? styles.navItemActive : ""}`}
-          >
-            <IconOrders />
-          </button>
-        </Link>
-        <Link href="/unit" title="Финансы">
-          <button
-            type="button"
-            className={`${styles.navItem} ${pathname.startsWith("/unit") ? styles.navItemActive : ""}`}
-          >
-            <IconChart />
-          </button>
-        </Link>
+        <button
+          type="button"
+          title="Заказы"
+          onClick={() => router.push("/orders")}
+          className={`${styles.navItem} ${pathname.startsWith("/orders") ? styles.navItemActive : ""}`}
+        >
+          <IconOrders />
+        </button>
+        <button
+          type="button"
+          title="Финансы"
+          onClick={() => router.push("/unit")}
+          className={`${styles.navItem} ${pathname.startsWith("/unit") ? styles.navItemActive : ""}`}
+        >
+          <IconChart />
+        </button>
       </nav>
     </aside>
   );

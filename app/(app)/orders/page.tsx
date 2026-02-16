@@ -77,27 +77,8 @@ function rub(v: unknown) {
 }
 
 function dmy(iso: string | null | undefined) {
-  if (!iso) return "—";
-
-  const s = String(iso).trim();
-  if (!s) return "—";
-
-  // есть ли явная таймзона в конце (Z или +03:00 / +0300)
-  const hasTz = /([zZ]|[+-]\d{2}:?\d{2})$/.test(s);
-
-  // приводим "YYYY-MM-DD HH:mm:ss(.sss)" -> "YYYY-MM-DDTHH:mm:ss(.sss)"
-  let normalized = s.includes(" ") ? s.replace(" ", "T") : s;
-
-  // если это просто дата "YYYY-MM-DD" — добавим полночь
-  if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
-    normalized = `${normalized}T00:00:00`;
-  }
-
-  // если таймзоны нет — считаем что это UTC и добавляем Z
-  if (!hasTz) normalized = `${normalized}Z`;
-
-  const d = new Date(normalized);
-  if (Number.isNaN(d.getTime())) return String(iso);
+  const d = parseIsoDate(iso);
+  if (!d) return iso ? String(iso) : "—";
 
   return d.toLocaleString("ru-RU", {
     timeZone: "Europe/Moscow",
@@ -109,18 +90,55 @@ function dmy(iso: string | null | undefined) {
   });
 }
 
-function refundDateMs(iso: string | null | undefined) {
-  if (!iso) return Number.POSITIVE_INFINITY;
+function parseIsoDate(iso: string | null | undefined) {
+  if (!iso) return null;
   const s = String(iso).trim();
-  if (!s) return Number.POSITIVE_INFINITY;
-  const hasTz = /([zZ]|[+-]\d{2}:?\d{2})$/.test(s);
+  if (!s) return null;
   let normalized = s.includes(" ") ? s.replace(" ", "T") : s;
+  const hasShortTz = /[+-]\d{2}$/.test(normalized);
+  if (hasShortTz) normalized = `${normalized}:00`;
+  const hasTz = /([zZ]|[+-]\d{2}(?::?\d{2})?)$/.test(normalized);
   if (/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
     normalized = `${normalized}T00:00:00`;
   }
   if (!hasTz) normalized = `${normalized}Z`;
   const d = new Date(normalized);
-  return Number.isNaN(d.getTime()) ? Number.POSITIVE_INFINITY : d.getTime();
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+const moscowDateKeyFmt = new Intl.DateTimeFormat("en-US", {
+  timeZone: "Europe/Moscow",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function moscowDateKey(d: Date) {
+  const parts = moscowDateKeyFmt.formatToParts(d);
+  const year = Number(parts.find((p) => p.type === "year")?.value ?? NaN);
+  const month = Number(parts.find((p) => p.type === "month")?.value ?? NaN);
+  const day = Number(parts.find((p) => p.type === "day")?.value ?? NaN);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return year * 10000 + month * 100 + day;
+}
+
+function refundBorderState(iso: string | null | undefined) {
+  const d = parseIsoDate(iso);
+  if (!d) return null;
+
+  const endDateKey = moscowDateKey(d);
+  const todayKey = moscowDateKey(new Date());
+
+  if (endDateKey < todayKey) return "expired";
+  if (endDateKey === todayKey) return "today";
+  return null;
+}
+
+function refundDateMs(iso: string | null | undefined) {
+  const d = parseIsoDate(iso);
+  return d ? d.getTime() : Number.POSITIVE_INFINITY;
 }
 
 function userName(u: User) {
@@ -201,10 +219,11 @@ export default function OrdersPage() {
     () => sortedRows.filter((o) => o.status !== "returned"),
     [sortedRows],
   );
-  const completedOrders = useMemo(
-    () => sortedRows.filter((o) => o.status === "returned"),
-    [sortedRows],
-  );
+  const completedOrders = useMemo(() => {
+    return sortedRows
+      .filter((o) => o.status === "returned")
+      .sort((a, b) => refundDateMs(b.refund_date) - refundDateMs(a.refund_date));
+  }, [sortedRows]);
 
   const copyOrderId = useCallback(async (id: string) => {
     const value = String(id || "").trim();
@@ -234,97 +253,108 @@ export default function OrdersPage() {
     }
   }, []);
 
-  const renderOrders = (orders: Order[]) => (
+  const renderOrders = (orders: Order[], highlightDeadlines = false) => (
     <div className={styles.grid}>
-      {orders.map((o) => (
-        <article key={o.id} className={styles.cardOrders}>
-          {/* header */}
-          <div className={styles.orderHead}>
-            <div className={styles.orderHeadLeft}>
-              <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
-              <span className={styles.orderCell}>
-                {o.product?.model_name ? `${o.product.model_name}` : ""}
-              </span>
+      {orders.map((o) => {
+        const borderState = highlightDeadlines ? refundBorderState(o.refund_date) : null;
+        const cardClass = [
+          styles.cardOrders,
+          borderState === "today" ? styles.cardOrdersDueToday : "",
+          borderState === "expired" ? styles.cardOrdersExpired : "",
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        return (
+          <article key={o.id} className={cardClass}>
+            {/* header */}
+            <div className={styles.orderHead}>
+              <div className={styles.orderHeadLeft}>
+                <div className={styles.orderTitle}>{o.product?.name || "—"}</div>
+                <span className={styles.orderCell}>
+                  {o.product?.model_name ? `${o.product.model_name}` : ""}
+                </span>
+              </div>
+
+              <div className={styles.orderHeadRight}>
+                <div className={styles.orderPrice}>{rub(o.total_price)}</div>
+              </div>
             </div>
 
-            <div className={styles.orderHeadRight}>
-              <div className={styles.orderPrice}>{rub(o.total_price)}</div>
-            </div>
-          </div>
+            {/* rent params */}
+            <div className={styles.orderGrid}>
+              <div className={styles.orderKpi}>
+                <div className={styles.orderKpiLabel}>Дней</div>
+                <div className={styles.orderKpiValue}>{o.days ?? "—"}</div>
+              </div>
 
-          {/* rent params */}
-          <div className={styles.orderGrid}>
-            <div className={styles.orderKpi}>
-              <div className={styles.orderKpiLabel}>Дней</div>
-              <div className={styles.orderKpiValue}>{o.days ?? "—"}</div>
-            </div>
+              <div className={styles.orderKpi}>
+                <div className={styles.orderKpiLabel}>Начало</div>
+                <div className={styles.orderKpiValue}>{dmy(o.paid_at)}</div>
+              </div>
 
-            <div className={styles.orderKpi}>
-              <div className={styles.orderKpiLabel}>Начало</div>
-              <div className={styles.orderKpiValue}>{dmy(o.paid_at)}</div>
-            </div>
-
-            <div className={styles.orderKpi}>
-              <div className={styles.orderKpiLabel}>Конец</div>
-              <div className={styles.orderKpiValue}>{dmy(o.refund_date)}</div>
-            </div>
-          </div>
-
-          {/* codes */}
-          <div className={styles.orderCodes}>
-            <div className={styles.orderCodeRow}>
-              <div className={styles.orderCodeLabel}>Код получения</div>
-              <div className={styles.orderCodeValue}>{o.receiving_code ?? "—"}</div>
+              <div className={styles.orderKpi}>
+                <div className={styles.orderKpiLabel}>Конец</div>
+                <div className={styles.orderKpiValue}>{dmy(o.refund_date)}</div>
+              </div>
             </div>
 
-            <div className={styles.orderCodeRow}>
-              <div className={styles.orderCodeLabel}>Код возврата</div>
-              <div className={styles.orderCodeValue}>{o.return_code ?? "—"}</div>
+            {/* codes */}
+            <div className={styles.orderCodes}>
+              <div className={styles.orderCodeRow}>
+                <div className={styles.orderCodeLabel}>Код получения</div>
+                <div className={styles.orderCodeValue}>{o.receiving_code ?? "—"}</div>
+              </div>
+
+              <div className={styles.orderCodeRow}>
+                <div className={styles.orderCodeLabel}>Код возврата</div>
+                <div className={styles.orderCodeValue}>{o.return_code ?? "—"}</div>
+              </div>
             </div>
-          </div>
 
-          {/* user */}
-          <div className={styles.orderUser}>
-            <div className={styles.orderUserName}>{userName(o.user)}</div>
+            {/* user */}
+            <div className={styles.orderUser}>
+              <div className={styles.orderUserName}>{userName(o.user)}</div>
 
-            <div className={styles.orderUserContacts}>
-              {o.user?.phone ? (
-                <a className={styles.orderLink} href={`tel:${formatRuPhone(o.user.phone)}`}>
-                  {formatRuPhone(o.user.phone)}
-                </a>
-              ) : (
-                <span className={styles.orderMuted}>телефон: —</span>
-              )}
+              <div className={styles.orderUserContacts}>
+                {o.user?.phone ? (
+                  <a className={styles.orderLink} href={`tel:${formatRuPhone(o.user.phone)}`}>
+                    {formatRuPhone(o.user.phone)}
+                  </a>
+                ) : (
+                  <span className={styles.orderMuted}>телефон: —</span>
+                )}
 
-              {o.user?.email ? (
-                <span className={styles.orderMuted}>{o.user.email}</span>
-              ) : (
-                <span className={styles.orderMuted}>email: —</span>
-              )}
+                {o.user?.email ? (
+                  <span className={styles.orderMuted}>{o.user.email}</span>
+                ) : (
+                  <span className={styles.orderMuted}>email: —</span>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* footer */}
-          <div className={styles.orderFooter}>
-            <div className={styles.orderFooterText}>
-              <span className={styles.orderFooterText}>
-                {o.box?.name ? `${o.box.name} · ` : ""}
-                ячейка {o.cell_id ?? "—"}
-              </span>
-              <button
-                type="button"
-                className={styles.orderIdCopy}
-                onClick={() => void copyOrderId(o.id)}
-                title="Скопировать ID"
-                aria-label={`Скопировать ID ${o.id}`}
-              >
-                ID: {o.id}
-              </button>
+            {/* footer */}
+            <div className={styles.orderFooter}>
+              <div className={styles.orderFooterText}>
+                <span className={styles.orderFooterText}>
+                  {o.box?.name ? `${o.box.name} · ` : ""}
+                  ячейка {o.cell_id ?? "—"}
+                </span>
+                <button
+                  type="button"
+                  className={styles.orderIdCopy}
+                  onClick={() => void copyOrderId(o.id)}
+                  title="Скопировать ID"
+                  aria-label={`Скопировать ID ${o.id}`}
+                >
+                  ID: {o.id}
+                </button>
+              </div>
+              <span className={styles.orderStatus}>{statusLabel(o.status)}</span>
             </div>
-            <span className={styles.orderStatus}>{statusLabel(o.status)}</span>
-          </div>
-        </article>
-      ))}
+          </article>
+        );
+      })}
     </div>
   );
 
@@ -350,7 +380,7 @@ export default function OrdersPage() {
             {!loading && activeOrders.length === 0 && (
               <div className={styles.empty}>Нет текущих аренд.</div>
             )}
-            {activeOrders.length > 0 && renderOrders(activeOrders)}
+            {activeOrders.length > 0 && renderOrders(activeOrders, true)}
           </section>
 
           <section className={styles.content}>

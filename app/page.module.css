@@ -570,6 +570,14 @@
   gap: 20px;
 }
 
+.cardOrdersDueToday {
+  border-color: #ffe0ab;
+}
+
+.cardOrdersExpired {
+  border-color: #fdc3c3;
+}
+
 .orderHead {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
